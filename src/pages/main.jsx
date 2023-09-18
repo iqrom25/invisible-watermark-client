@@ -6,6 +6,7 @@ import Frame from "../components/frame";
 import { useMutation } from "@tanstack/react-query";
 import { postWatermarkedImage } from "../services/watermarkAPi";
 import Swal from "sweetalert2";
+import {saveAs} from 'file-saver'
 
 const Main = () => {
   const hostRef = React.createRef();
@@ -56,9 +57,12 @@ const Main = () => {
     const form = new FormData();
     form.append("Host", host);
     form.append("Watermark", watermark);
-    form.append("Value", 1);
     mutation.mutate(form);
   };
+
+  const handleSaveImage = () =>{
+    saveAs(`data:image/png;base64,${result?.watermarkedImage}`,'Citra Berwatermark')
+  }
 
   if (mutation.isLoading) return <Loading />;
 
@@ -68,8 +72,8 @@ const Main = () => {
         <div className="col-6 text-center">
           <Frame header="Inisialisasi">
             <Image
-              header="Citra Host"
-              text="Host image"
+              text="Citra Host"
+              showInfo = {true}
               preview={hostPreview}
               ref={hostRef}
               onChange={handleInputChange}
@@ -81,8 +85,8 @@ const Main = () => {
               </Button>
             </Image>
             <Image
-              header="Citra Watermark"
-              text="Watermark image"
+              text="Citra Watermark"
+              showInfo = {true}
               preview={watermarkPreview}
               ref={watermarkRef}
               onChange={handleInputChange}
@@ -98,13 +102,11 @@ const Main = () => {
         <div className="col-6 text-center">
           <Frame header="DWT Proses">
             <Image
-              header="Citra Host"
-              text="Host image"
+              text="Citra Host"
               preview={result ? `data:image/png;base64,${result?.hostDwt}` : ""}
             />
             <Image
-              header="Citra Watermark"
-              text="Watermark image"
+              text="Citra Watermark"
               preview={
                 result ? `data:image/png;base64,${result?.watermarkDwt}` : ""
               }
@@ -115,28 +117,26 @@ const Main = () => {
         <div className="col-6 text-center">
           <Frame header="Hasil Penyisipan">
             <Image
-              header="Citra Berwatermark"
-              text="Watermarked image"
+              text="Citra Berwatermark"
+              showInfo = {true}
               preview={
                 result
                   ? `data:image/png;base64,${result?.watermarkedImage}`
                   : ""
               }
             >
-              <Button onClick={handleEmbeded}>Simpan Gambar</Button>
+              <Button onClick={handleSaveImage}>Simpan Gambar</Button>
             </Image>
           </Frame>
         </div>
         <div className="col-6 text-center">
           <Frame header="Perbandingan">
             <Image
-              header="Citra Host"
-              text="Host image"
+              text="Citra Host"
               preview={result ? hostPreview : ''}
             />
             <Image
-              header="Citra Berwatermark"
-              text="watermark image"
+              text="Citra Berwatermark"
               preview={
                 result
                   ? `data:image/png;base64,${result?.watermarkedImage}`
@@ -156,41 +156,7 @@ const Main = () => {
             </div>
           </Frame>
         </div>
-        {/* <div className="col-4 text-center">
-            <Image
-              text="watermark image"
-              preview={watermarkPreview}
-              ref={watermarkRef}
-              onChange={handleInputChange}
-              setPreview={setWatermarkPreview}
-              setData={setWatermark}
-            />
-            <Button onClick={handleSelectImage} ref={watermarkRef}>
-              Pilih Gambar
-            </Button>
-          </div>
-          <div className="col-4 text-center">
-            <Image
-              text="watermarked image"
-              preview={
-                result
-                  ? `data:image/png;base64,${result?.watermarkedImage}`
-                  : ""
-              }
-            />
-            <Button onClick={handleEmbeded}>Embeded</Button>
-            <div className="row my-3">
-              <label className="col-sm-4 col-form-label">Nilai PSNR</label>
-              <div className="col-sm-6">
-                <input
-                  type="email"
-                  className="form-control"
-                  value={result?.psnr}
-                  disabled
-                />
-              </div>
-            </div>
-          </div> */}
+        
       </div>
     </div>
   );
