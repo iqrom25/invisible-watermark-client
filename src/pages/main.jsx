@@ -6,7 +6,7 @@ import Frame from "../components/frame";
 import { useMutation } from "@tanstack/react-query";
 import { postWatermarkedImage } from "../services/watermarkAPi";
 import Swal from "sweetalert2";
-import {saveAs} from 'file-saver'
+import { saveAs } from "file-saver";
 
 const Main = () => {
   const hostRef = React.createRef();
@@ -60,9 +60,12 @@ const Main = () => {
     mutation.mutate(form);
   };
 
-  const handleSaveImage = () =>{
-    saveAs(`data:image/png;base64,${result?.watermarkedImage}`,'Citra Berwatermark')
-  }
+  const handleSaveImage = () => {
+    saveAs(
+      `data:image/png;base64,${result?.watermarkedImage}`,
+      "Citra Berwatermark"
+    );
+  };
 
   if (mutation.isLoading) return <Loading />;
 
@@ -73,7 +76,7 @@ const Main = () => {
           <Frame header="Inisialisasi">
             <Image
               text="Citra Host"
-              showInfo = {true}
+              showInfo={true}
               preview={hostPreview}
               ref={hostRef}
               onChange={handleInputChange}
@@ -86,7 +89,7 @@ const Main = () => {
             </Image>
             <Image
               text="Citra Watermark"
-              showInfo = {true}
+              showInfo={true}
               preview={watermarkPreview}
               ref={watermarkRef}
               onChange={handleInputChange}
@@ -102,11 +105,13 @@ const Main = () => {
         <div className="col-6 text-center">
           <Frame header="DWT Proses">
             <Image
-              text="Citra Host"
+              text="Citra Host DWT"
+              showInfo={true}
               preview={result ? `data:image/png;base64,${result?.hostDwt}` : ""}
             />
             <Image
-              text="Citra Watermark"
+              text="Citra Watermark DWT"
+              showInfo={true}
               preview={
                 result ? `data:image/png;base64,${result?.watermarkDwt}` : ""
               }
@@ -118,7 +123,7 @@ const Main = () => {
           <Frame header="Hasil Penyisipan">
             <Image
               text="Citra Berwatermark"
-              showInfo = {true}
+              showInfo={true}
               preview={
                 result
                   ? `data:image/png;base64,${result?.watermarkedImage}`
@@ -131,10 +136,7 @@ const Main = () => {
         </div>
         <div className="col-6 text-center">
           <Frame header="Perbandingan">
-            <Image
-              text="Citra Host"
-              preview={result ? hostPreview : ''}
-            />
+            <Image text="Citra Host" preview={result ? hostPreview : ""} />
             <Image
               text="Citra Berwatermark"
               preview={
@@ -156,7 +158,6 @@ const Main = () => {
             </div>
           </Frame>
         </div>
-        
       </div>
     </div>
   );

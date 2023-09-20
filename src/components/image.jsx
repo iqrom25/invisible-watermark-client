@@ -1,5 +1,6 @@
 import React from "react";
 import { CustomContext } from "../context/customContext";
+import { Buffer } from "buffer";
 
 const Image = React.forwardRef((props, ref) => {
   const { text, preview, onChange, setPreview, setData, children, showInfo } =
@@ -59,7 +60,7 @@ const Image = React.forwardRef((props, ref) => {
     }
   };
 
-  React.useEffect(() => {
+  const getSizeDimension = React.useCallback(() => {
     switch (text) {
       case "Citra Host":
         setFileSize(size?.host);
@@ -69,39 +70,31 @@ const Image = React.forwardRef((props, ref) => {
         setFileSize(size?.watermark);
         setFileDimension(dimension?.watermark);
         break;
-      case "Citra Berwatermark":
+      default:
         const base64String = preview.substring(preview.indexOf(",") + 1);
-        setFileSize(Math.ceil((base64String.length * 6) / 8 / 1000));
+        const imageSize = Buffer.from(base64String, "base64");
+        setFileSize(Math.ceil(imageSize.byteLength / 1024));
 
         const image = new window.Image();
         image.src = preview;
         image.onload = async () => {
           setDimension({
             ...dimension,
-            watermarked: {
+            base64: {
               width: image.width,
               height: image.height
             }
           });
         };
 
-        setFileDimension(dimension?.watermarked);
-        break;
-      default:
+        setFileDimension(dimension?.base64);
         break;
     }
-  }, [
-    dimension,
-    dimension?.host,
-    dimension?.watermark,
-    dimension?.watermarked,
-    preview,
-    setDimension,
-    size?.host,
-    size?.watermark,
-    size?.watermarked,
-    text
-  ]);
+  }, [preview, setDimension, size?.host, size?.watermark, text]);
+
+  React.useEffect(() => {
+    getSizeDimension();
+  }, [getSizeDimension]);
 
   return (
     <div className="image-frame my-3">
@@ -120,12 +113,14 @@ const Image = React.forwardRef((props, ref) => {
           alt={text}
         />
       </div>
-      { showInfo && preview && (
+      {showInfo && preview && (
         <div className="img-info">
           <p>Ukuran : {fileSize} KB</p>
-          <p>
-            Dimensi : {fileDimension?.width}px X {fileDimension?.height}px
-          </p>
+          {!text.includes("DWT") && (
+            <p>
+              Dimensi : {fileDimension?.width}px X {fileDimension?.height}px
+            </p>
+          )}
         </div>
       )}
 
