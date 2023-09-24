@@ -20,10 +20,10 @@ const Image = React.forwardRef((props, ref) => {
 
       switch (text) {
         case "Citra Host":
-          setSize({ ...size, host: imgSize });
+          setSize((value) => ({ ...value, host: imgSize }));
           break;
         case "Citra Watermark":
-          setSize({ ...size, watermark: imgSize });
+          setSize((value) => ({ ...value, watermark: imgSize }));
           break;
         default:
           break;
@@ -34,22 +34,22 @@ const Image = React.forwardRef((props, ref) => {
       image.onload = async () => {
         switch (text) {
           case "Citra Host":
-            setDimension({
-              ...dimension,
+            setDimension((dim) => ({
+              ...dim,
               host: {
                 width: image.width,
                 height: image.height
               }
-            });
+            }));
             break;
           case "Citra Watermark":
-            setDimension({
-              ...dimension,
+            setDimension((dim) => ({
+              ...dim,
               watermark: {
                 width: image.width,
                 height: image.height
               }
-            });
+            }));
             break;
           default:
             break;
@@ -60,7 +60,7 @@ const Image = React.forwardRef((props, ref) => {
     }
   };
 
-  const getSizeDimension = React.useCallback(() => {
+  React.useEffect(() => {
     switch (text) {
       case "Citra Host":
         setFileSize(size?.host);
@@ -78,23 +78,28 @@ const Image = React.forwardRef((props, ref) => {
         const image = new window.Image();
         image.src = preview;
         image.onload = async () => {
-          setDimension({
-            ...dimension,
-            base64: {
-              width: image.width,
-              height: image.height
-            }
-          });
+          if (!dimension.base64)
+            setDimension((dim) => ({
+              ...dim,
+              base64: {
+                width: image.width,
+                height: image.height
+              }
+            }));
+          setFileDimension(dimension?.base64);
         };
-
-        setFileDimension(dimension?.base64);
         break;
     }
-  }, [preview, setDimension, size?.host, size?.watermark, text]);
-
-  React.useEffect(() => {
-    getSizeDimension();
-  }, [getSizeDimension]);
+  }, [
+    dimension?.base64,
+    dimension?.host,
+    dimension?.watermark,
+    preview,
+    setDimension,
+    size?.host,
+    size?.watermark,
+    text
+  ]);
 
   return (
     <div className="image-frame my-3">
