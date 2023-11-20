@@ -78,15 +78,19 @@ const Image = React.forwardRef((props, ref) => {
         const image = new window.Image();
         image.src = preview;
         image.onload = async () => {
-          if (!dimension.base64)
-            setDimension((dim) => ({
-              ...dim,
-              base64: {
-                width: image.width,
-                height: image.height
-              }
-            }));
-          setFileDimension(dimension?.base64);
+          if (text === "Citra Berwatermark") {
+            // setDimension((dim) => ({
+            //   ...dim,
+            //   base64: {
+            //     width: image.width,
+            //     height: image.height
+            //   }
+            // }));
+            setFileDimension({
+              width: image.width,
+              height: image.height
+            });
+          }
         };
         break;
     }
@@ -95,7 +99,6 @@ const Image = React.forwardRef((props, ref) => {
     dimension?.host,
     dimension?.watermark,
     preview,
-    setDimension,
     size?.host,
     size?.watermark,
     text
